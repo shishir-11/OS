@@ -37,7 +37,7 @@ void displayHistory()
 
 
 
-int get_Tok(char inputBuffer[], char *args[],int *flag)
+int get_Tok(char inputBuffer[], char *args[],int *background)
 {
    	int length;
     	int i;     
@@ -45,7 +45,7 @@ int get_Tok(char inputBuffer[], char *args[],int *flag)
     	int ct = 0; 
     	int hist;
 
- 	length = read(STDIN_FILENO, inputBuffer, MAX_LINE);
+ 	length = read(STDIN_FILENO, inputBuffer, MAX_LINE);// 0  if EOD reached , -1 if error ,otherwise number of bytes.
 		
  
    
@@ -89,14 +89,14 @@ int get_Tok(char inputBuffer[], char *args[],int *flag)
                     start = i;
                 if (inputBuffer[i] == '&')
                 {
-                    *flag  = 1;
+                    *background  = 1;
                     inputBuffer[i] = '\0';
                 }
         }
     }
     
     args[ct] = NULL; //if the input line was > 80
-
+if(args[0]==NULL) return -1;
 if(strcmp(args[0],"cd")==0){
 	if(chdir(args[1])!=0) printf("\nInvalid\n");
 	else{
@@ -183,8 +183,7 @@ void setup(char inputBuffer[], char *args[] ,int *background){
         
        		 else if (pid == 0)//if pid ==0
         	{
-            		if(strcmp(args[0],"\n")==0) return;
-           	 	//command not executed
+            		
             		if (execvp(args[0], args) == -1 && strcmp(args[0],"history")!=0 && strcmp(args[0],"cd")!=0 && strcmp(args[0],"exit")!=0)
            	 	{	
 		
